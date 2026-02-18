@@ -50,10 +50,6 @@ The \verb{astorb} database at Lowell Observatory,
 ## Load data.
 data(kirkwood, package="Dimodal")
 
-## The Ditrack and changepoints can take a while to run, so to pass
-## the CRAN time limit in examples they are marked don't run.  To see
-## the complete example call example(kirkwood, run.dontrun=TRUE).
-
 ## Start from scratch.
 ## Normally you would not need to save the results of the call, but
 ## this clutters up the screen.
@@ -63,7 +59,6 @@ opt <- Diopt(NULL)
 ## This is a large data set so spacing in features is small but
 ## smooth, which allows tighter detector parameters.  Values depend
 ## on the range of the spacing and are found by trial and error.
-## Leave off changepoints for repeatability in this example.
 ## Set RNG seeds for repeatability.
 ## Using bars to mark flats is easier to read with dense data.
 opt1 <- Diopt(peak.fht=0.015, flat.fripple=0.0075, analysis=c("lp", "diw"),
@@ -126,16 +121,6 @@ opt3 <- Diopt(lp.window=0.015, diw.window=0.015, peak.fht=0.025, peak.frelht=0.1
 ## value and a second, smaller increase pulls the peak to 1.93.
 m2 <- Dimodal(kirkwood) ; mtch <- match.features(m2, near=30)
 dev.new(width=12, height=4) ; plot(m2)
-
-## To run changepoints, do this.
-## Using all supported libraries they surround the 3:1, 2:1,
-## and 7:4 gaps to the side of the peak, but not directly at
-## the feature.  They also mark one side of the 5:2, 7:3, and
-## 9:4 gaps.
-\dontrun{ mcpt <- Dimodal(kirkwood, Diopt.local(analysis="cpt")) ; mcpt }
-\dontrun{ dev.new(width=8, height=4) ; plot(mcpt) }
-## Show the voting from all libraries.  This is a tall graph.
-\dontrun{ dev.new(height=10, width=6) ; plot(mcpt$cpt) }
 
 ## Restore default.
 opt <- Diopt(opt)

@@ -2,7 +2,7 @@
 # test_find_peaks.Rtest:
 # Test benches for the find.peaks detector.
 #
-# c 2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2025-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
 # -
@@ -11,7 +11,8 @@
 
 if (interactive()) {
   source('../R/detectors.R')
-
+  source('../R/methods.R')
+  
   if (is.loaded('C_find_peaks', PACKAGE='Dimodal')) {
     dyn.unload('../src/Dimodal.so')
   }
@@ -147,19 +148,24 @@ verify.minmax <- function(testID, mm, pos, ismax, vals, fhsupp, fhtie=0.001) {
           if ((xl < lsupp[i]) &&
               ((2 * .Machine$double.eps) < abs(xl - lsupp[i]))) {
             cat('    test ', testID,
-                sprintf(' L support peak %3d above data, %.3f > %.3f\n',
-                        mm$pos[mm$ismax][i], lsupp[i], xl))
+                sprintf(' peak %3d L support @ %3d %.3f above data %.3f\n',
+                        mm$pos[i], mm$lsuppID[i], lsupp[i], xl))
             passed <- FALSE
           }
-          # Ignore check of first point outside support if in run fhtie.
+          # Ignore check of first point outside support if in run fhtie or
+          # same below (very) generous machine accuracy - multiplier has
+          # been tweaked to avoid some mismatches on some architectures,
+          # including valgrind runs.
           xll <- vals[mm$lsuppID[i]-1]
           # We allow 2*fhtie here because the two points may be in the middle
           # of a flat and on either side of the source.  This happens in
           # TC 8, peak 3 at 12, with lsupp at 10 part of a run 8:11.
-          if ((lsupp[i] < xll) && !is.tied(xl, xll, 2*fhtie)) {
+          if ((lsupp[i] < xll) &&
+              ((20 * .Machine$double.eps) < abs(xll - lsupp[i])) &&
+              !is.tied(xl, xll, 2*fhtie)) {
             cat('    test ', testID,
-                sprintf(' L support peak %3d below next data, %.3f < %.3f\n',
-                        mm$pos[mm$ismax][i], lsupp[i], xll))
+                sprintf(' peak %3d L support @ %3d %.3f below next data %.3f\n',
+                        mm$pos[i], mm$lsuppID[i], lsupp[i], xll))
             passed <- FALSE
           }
         }
@@ -168,15 +174,17 @@ verify.minmax <- function(testID, mm, pos, ismax, vals, fhsupp, fhtie=0.001) {
           if ((xr < rsupp[i]) &&
               ((2 * .Machine$double.eps) < abs(xr - rsupp[i]))) {
             cat('    test ', testID,
-                sprintf(' R support peak %3d above data, %.3f > %.3f\n',
-                        mm$pos[mm$ismax][i], rsupp[i], xr))
+                sprintf(' peak %3d R support @ %3d %.3f above data %.3f\n',
+                        mm$pos[i], mm$rsuppID[i], rsupp[i], xr))
             passed <- FALSE
           }
           xrr <- vals[mm$rsuppID[i]+1]
-          if ((rsupp[i] < xrr) && !is.tied(xr, xrr, 2*fhtie)) {
+          if ((rsupp[i] < xrr) &&
+              ((20 * .Machine$double.eps) < abs(xrr - rsupp[i])) &&
+              !is.tied(xr, xrr, 2*fhtie)) {
             cat('    test ', testID,
-                sprintf(' R support peak %3d below next data, %3.f < %.3f\n',
-                        mm$pos[mm$ismax][i], rsupp[i], xrr))
+                sprintf(' peak %3d R support @ %3d %.3f below next data %.3f\n',
+                        mm$pos[i], mm$rsuppID[i], rsupp[i], xrr))
             passed <- FALSE
           }
         }
@@ -199,27 +207,6 @@ is.tied <- function(x1, x2, fhtie=0.001) {
   (is.na(x1) & is.na(x2)) | (!is.finite(x1) & !is.finite(x2)) |
   ((0 == x1) & (0 == x2)) |
   ((2 * abs(x1-x2)/(x1+x2)) <= fhtie)
-}
-
-# Test that the value returned from evaluating cmd with its arguments args
-# wrapped in a list has 0 rows.  Treat errors as failures.  Add testID to
-# any failure message and set the global allpass to FALSE.  Returns TRUE if
-# the test passes.
-verify.empty <- function(testID, cmd, args) {
-
-  passed <- TRUE
-
-  res <- tryCatch( do.call(cmd, args),
-                   error=function(e) { matrix(1, nrow=1, ncol=1) })
-  if (0 != nrow(res)) {
-    cat('    test ', testID, ' result did not have 0 rows\n')
-    passed <- FALSE
-  }
-
-  if (!passed) {
-    allpass <<- FALSE
-  }
-  passed
 }
 
 

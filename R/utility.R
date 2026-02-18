@@ -2,7 +2,7 @@
 # utility.R:
 # A grab-bag of useful helper functions for the Dimodal results.
 #
-# c 2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2025-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
 # - 

@@ -7,7 +7,7 @@
       Define NO_PCGRNG while compiling to use R's sampling function for
       excursions, although it will be slower than using the PCG RNG.
 
-      c 2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+      c 2025-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 *****/
 
 

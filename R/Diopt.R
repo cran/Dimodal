@@ -3,7 +3,7 @@
 # Gathering of analysis and test parameters for the Dimodal package.  Modeled
 # on the par() options storage.
 #
-# c 2024-2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2024-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
 # - 
@@ -121,8 +121,8 @@ Diopt.local <- function(...) {
 diopt.dflt <-
   list(
     # Analyses
-    analysis=c("lp", "diw", "cpt"),
-                               # which spacing/smoothing to check (cpt is Di)
+    analysis=c("lp", "diw"),
+                               # which spacing/smoothing to check
     # Data prep
     data.midq=0,               # mid-quantile approximation method
     # Low-pass Filter Setup
@@ -163,15 +163,6 @@ diopt.dflt <-
     alpha.runht=0.005,         # runs permutation significance level
     alpha.nrun=0.01,           # runs statistics significance level
     alpha.runlen=0.01,         # longest run significance level
-    # Changepoint Detectors
-    cpt.libs=c("-astsa", "-ecp"),
-                               # library [in|ex]clusion list
-    cpt.fncpt.max=0.05,        # max cpt count as fraction of data
-    cpt.qvote=c(0.10, 0.90),   # ignore cpt libs with #pt outside range
-    cpt.fsep=0.02,             # min separation b/t cpt as fraction data
-    cpt.sep=10,                # min separation b/t cpt as absolute index diff
-    cpt.libsep=2,              # min distance joining libary variant cpt
-    cpt.timeout=2,             # time-out in seconds per CPT algorithm
     # Tracking Parameters
     track.maxwindow=0.4,       # largest value for [lp|diw].window
     # Display Parameters
@@ -182,7 +173,6 @@ diopt.dflt <-
     colID.cdf=1,               # index in palette drawing distribution
     colID.peak=8,              # index in palette marking peaks
     colID.flat=5,              # index in palette marking flats
-    colID.cpt=2,               # index in palette marking changepoints
     mark.alpha=TRUE,           # whether to underline significant probabilities
     mark.flat="box",           # how to indicate flats in graphs
     digits=4                   # signif digits for raw values, 0 take options()
@@ -196,7 +186,7 @@ assign("diopt", diopt.dflt, envir=diopt.env)
 
 
 # Spacing analysis to generate/run.
-analysis.names <- c("lp", "diw", "cpt")
+analysis.names <- c("lp", "diw")
 
 # Low-pass filter kernels.
 fir.names <- c("kaiser", "triangular", "bartlett", "hamming", "hanning",
@@ -220,7 +210,6 @@ flat.style <- c("box", "bar")
 # cannot be used.  If tag is not recognized return NULL.
 validate.diopt <- function(tag, val) {
 
-  # Does no checking of cpt.libs.
   switch(tag,
          analysis=diopt.isstring(val, analysis.names, TRUE),
          data.midq=diopt.isposint(val, incl0=TRUE, maxval=4),
@@ -254,13 +243,6 @@ validate.diopt <- function(tag, val) {
          alpha.runht=diopt.isfraction(val),
          alpha.nrun=diopt.isfraction(val),
          alpha.runlen=diopt.isfraction(val),
-         cpt.libs=val,
-         cpt.fncpt.max=diopt.isfraction(val),
-         cpt.qvote=diopt.isqrange(val),
-         cpt.fsep=diopt.isfraction(val),
-         cpt.sep=diopt.isposint(val, incl0=FALSE),
-         cpt.libsep=diopt.isposint(val, incl0=TRUE),
-         cpt.timeout=diopt.ispos(val),
          track.maxwindow=diopt.iswindow(val),
          palette=diopt.ispalette(val),
          colID.data=diopt.iscolorID(val),
@@ -269,7 +251,6 @@ validate.diopt <- function(tag, val) {
          colID.cdf=diopt.iscolorID(val),
          colID.peak=diopt.iscolorID(val),
          colID.flat=diopt.iscolorID(val),
-         colID.cpt=diopt.iscolorID(val),
          mark.alpha=diopt.isbool(val),
          mark.flat=diopt.isstring(val, flat.style, FALSE),
          digits=diopt.isposint(val, incl0=TRUE),

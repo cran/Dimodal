@@ -15,8 +15,6 @@
   all find.flat tests PASSED
 > source('../tests/test_find_lvlsec.Rtest', echo=FALSE)
   all find.lvlsec tests PASSED
-> source('../tests/test_find_cpt.Rtest', echo=FALSE)
-  all find.cpt tests PASSED
 > source('../tests/test_sigtests.Rtest', echo=FALSE)
   all sigtest tests PASSED
 > source('../tests/test_utility.Rtest', echo=FALSE)

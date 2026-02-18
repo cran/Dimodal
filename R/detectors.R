@@ -3,7 +3,7 @@
 # R side interface to feature detectors.  These are not specific to the
 # spacing module; they can be used for any data.
 #
-# c 2024-2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2024-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
 # -
@@ -110,7 +110,7 @@ find.flats <- function(x, fripple, minlen, fminlen, noutlier) {
   if (!is.vector(x)) {
     x <- as.vector(x)
   }
-  if (length(x) < 2) {
+  if (sum(is.finite(x)) < 2) {
     return(mockup.Diflat())
   }
 

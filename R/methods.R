@@ -2,10 +2,9 @@
 # methods.R:
 # S3 class methods for the data structures built in this library.
 #
-# c 2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2025-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
-# - Marking voting cpt libraries somehow on plot.
 #   
 
 
@@ -13,7 +12,7 @@
 
 # Print the contents of Dimodal object x, depending on which analyses have
 # been done and the feature(s) selected.
-print.Dimodal <- function(x, feature=c("peaks", "flats", "cpt"), ...) {
+print.Dimodal <- function(x, feature=c("peaks", "flats"), ...) {
 
   feature <- match.arg(feature, several.ok=TRUE)
 
@@ -46,18 +45,12 @@ print.Dimodal <- function(x, feature=c("peaks", "flats", "cpt"), ...) {
     print(x$diw.flats)
   }
 
-  if (("cpt" %in% feature) && ("cpt" %in% names(x))) {
-    cat("Changepoints in Spacing\n")
-    cat("positions in spacing\n")
-    print(x$cpt)
-  }
-
   invisible(x)
 }
 
 # Summarize the contents of Dimodal object, depending on which analyses have
 # been done and the feature(s) selected.
-summary.Dimodal <- function(object, feature=c("peaks", "flats", "cpt"), ...) {
+summary.Dimodal <- function(object, feature=c("peaks", "flats"), ...) {
 
   feature <- match.arg(feature, several.ok=TRUE)
 
@@ -87,19 +80,13 @@ summary.Dimodal <- function(object, feature=c("peaks", "flats", "cpt"), ...) {
     summary(x$diw.flats)
   }
 
-  if (("cpt" %in% feature) && ("cpt" %in% names(x))) {
-    cat("Changepoints in Spacing\n")
-    cat("positions in spacing\n")
-    summary(x$cpt)
-  }
-
   invisible(object)
 }
 
 # Return a dummy object of class Dimodal, with mockups for all elements.
 mockup.Dimodal <- function() {
 
-  res <- list(data=mockup.Didata(), opt=NULL, cpt=mockup.Dicpt(),
+  res <- list(data=mockup.Didata(), opt=NULL, 
               lp.peaks=mockup.Dipeak(), lp.flats=mockup.Diflat(),
               diw.peaks=mockup.Dipeak(), diw.flats=mockup.Diflat())
   class(res) <- "Dimodal"
@@ -115,7 +102,7 @@ mockup.Dimodal <- function() {
 # plots.
 # Returns x invisibly.
 plot.Dimodal <- function(x, show=c("lp", "histogram", "diw"),
-                         feature=c("peaks", "flats", "cpt"), opt=Diopt(), ...) {
+                         feature=c("peaks", "flats"), opt=Diopt(), ...) {
 
   show <- unique(tolower(show))
   show <- match.arg(show, several.ok=TRUE)
@@ -181,9 +168,6 @@ plot.Dimodal <- function(x, show=c("lp", "histogram", "diw"),
           mark.Diflat(x$diw.flats, h, opt)
         }
       }
-      if (("cpt" %in% feature) && ("cpt" %in% names(x))) {
-        mark.Dicpt(x$cpt, h, opt)
-      }
     }
   
     if ("lp" == show[i]) {
@@ -193,9 +177,6 @@ plot.Dimodal <- function(x, show=c("lp", "histogram", "diw"),
       }
       if (("flats" %in% feature) && ("lp.flats" %in% names(x))) {
         mark.Diflat(x$lp.flats, NULL, opt)
-      }
-      if (("cpt" %in% feature) && ("cpt" %in% names(x))) {
-        mark.Dicpt(x$cpt, NULL, opt)
       }
     }
   
@@ -207,14 +188,6 @@ plot.Dimodal <- function(x, show=c("lp", "histogram", "diw"),
       if (("flats" %in% feature) && ("diw.flats" %in% names(x))) {
         mark.Diflat(x$diw.flats, NULL, opt)
       }
-      if (("cpt" %in% feature) && ("cpt" %in% names(x))) {
-        mark.Dicpt(x$cpt, NULL, opt)
-      }
-    }
-
-    if ("cpt" == show[i]) {
-      plot_Dimodal_cpt(x, opt, add.decile)
-      mark.Dicpt(x$cpt, NULL, opt)
     }
   }
 
@@ -327,30 +300,6 @@ plot_Dimodal_diw <- function(x, opt, add.decile) {
   if (add.decile) {
     axis(1, line=4, at=ncol(x$data)*seq(0,1,by=0.1),
          labels=FALSE, col=clr[opt$colID.cdf])
-  }
-}
-
-# Plot the raw data only in Dimodal class object x.  Use graphic options in
-# Diopt opt.  If add.decile is TRUE draw the decile axis underneath.
-plot_Dimodal_cpt <- function(x, opt, add.decile) {
-
-  raw <- x$data["Di",-1L]
-  
-  clr <- get.colors(opt$palette)
-  clr[opt$colID.data] <- adjustcolor(clr[opt$colID.data], 1, 0.75, 0.75, 0.75)
-  
-  ymax <- max(quantile(raw, 0.98, names=FALSE))
-  plot(0, 0, col=NA, xlim=c(0,ncol(x$data)), ylim=c(0,ymax),
-       xlab="index", ylab="spacing", main="Changepoints")
-  points(2:ncol(x$data), raw, col=clr[opt$colID.data], pch=20, cex=0.5)
-
-  raw[raw < (1.04 * ymax)] <- NA
-  raw[!is.na(raw)] <- 1.03 * ymax
-  points(raw, col=clr[opt$colID.data], pch=4)
-
-  if (add.decile) {
-    axis(1, line=4, at=ncol(x$data)*seq(0,1,by=0.1), labels=FALSE,
-         col=clr[opt$colID.cdf])
   }
 }
 
@@ -515,20 +464,7 @@ print.Diopt <- function(x, ...) {
               wval, printopt(x, "alpha.runht", wtag),
               wval, printopt(x, "alpha.nrun", wtag),
               wval, printopt(x, "alpha.runlen", wtag)))
-  cat(sprintf("  %-*s\n",
-              wval, printopt(x, "mark.alpha", wtag)))
   
-  cat("Changepoint Detector Options (cpt.*):\n")
-  cat(sprintf("  %-*s    %-*s    %-*s\n",
-              wval, printopt(x, "cpt.fncpt.max", wtag),
-              wval, printopt(x, "cpt.qvote", wtag),
-              wval, printopt(x, "cpt.timeout", wtag)))
-  cat(sprintf("  %-*s    %-*s    %-*s\n",
-              wval, printopt(x, "cpt.fsep", wtag),
-              wval, printopt(x, "cpt.sep", wtag),
-              wval, printopt(x, "cpt.libsep", wtag)))
-  cat(sprintf("  %-*s\n", wval, printopt(x, "cpt.libs", wtag)))
-
   cat("Tracking Options (track.*):\n")
   cat(sprintf("  %-*s\n",
               wval, printopt(x, "track.maxwindow", wtag)))
@@ -537,11 +473,14 @@ print.Diopt <- function(x, ...) {
   cat(sprintf("  %-*s    %-*s\n",
               wval, printopt(x, "palette", wtag),
               wval, printopt(x, "digits", wtag)))
+  cat("Display Options - Annotations (mark.*):\n")
+  cat(sprintf("  %-*s    %-*s\n",
+              wval, printopt(x, "mark.alpha", wtag),
+              wval, printopt(x, "mark.flat", wtag)))
   cat("Display Options - Color (colID.*):\n")
-  cat(sprintf("  %-*s    %-*s    %-*s\n",
+  cat(sprintf("  %-*s    %-*s\n",
               wval, printopt(x, "colID.peak", wtag),
-              wval, printopt(x, "colID.flat", wtag),
-              wval, printopt(x, "colID.cpt", wtag)))
+              wval, printopt(x, "colID.flat", wtag)))
   cat(sprintf("  %-*s    %-*s    %-*s\n",
               wval, printopt(x, "colID.data", wtag),
               wval, printopt(x, "colID.filter", wtag),
@@ -559,7 +498,7 @@ print.Diopt <- function(x, ...) {
 printopt <- function(x, tag, wtag) {
 
   shorttag <- sub("(.+?)\\.", "", tag)
-  if (("lp.tests" == tag) || ("diw.tests" == tag) || "cpt.libs" == tag) {
+  if (("lp.tests" == tag) || ("diw.tests" == tag)) {
     paste0(sprintf("%-*s", wtag, shorttag), paste(x[[tag]], collapse=", "))
   } else if (("lp.param" == tag) || ("diw.param" == tag)) {
     if (is.null(x[[tag]])) {
@@ -571,9 +510,6 @@ printopt <- function(x, tag, wtag) {
                      })
       paste0(sprintf("%-*s", wtag, shorttag), paste(lval, collapse=", "))
     }
-  } else if ("cpt.qvote" == tag) {
-    paste0(sprintf("%-*s", wtag, shorttag),
-           "(", paste(x[[tag]], collapse=", "), ")")
   } else if (1 == length(x[[tag]])) {
     paste(sprintf("%-*s", wtag, shorttag), x[[tag]], sep="")
   } else {
@@ -1367,305 +1303,6 @@ mockup.Didata <- function() {
   attributes(m) <- c(attributes(m), list(x="mockup"))
   class(m) <- c("Didata", class(m))
   m
-}
-
-
-### Dicpt objects.
-
-# Print table of the changepoints found in the spacing per the Dicpt class
-# object x.  Other arguments are ignored.  Returns x invisibly.
-print.Dicpt <- function(x, ...) {
-
-  if (0 == nrow(x$cpt)) {
-    cat("\n  no changepoints found\n\n")
-    return(invisible(x))
-  }
-
-  opt <- Diopt()
-  dgt <- opt$digits
-  if (0 == dgt) {
-    dgt <- options()$digits
-  }
-
-  spos <- format(x$cpt$pos)
-  wpos <- max(nchar(spos), nchar("pos"))
-  spos <- format(spos, width=wpos, justify="r")
-  sxpos <- format(x$cpt$x, digits=dgt)
-  wloc <- max(nchar(sxpos), nchar("raw"))
-  sxpos <- format(sxpos, width=wloc, justify="r")
-  sval <- format(x$cpt$val, digits=dgt)
-  wval <- max(nchar(sval), nchar("Di"))
-  sval <- format(sval, width=wval, justify="r")
-  snvote <- format(x$cpt$nvote)
-  wnvote <- max(nchar(snvote), nchar("nvote"))
-  snvote <- format(snvote, width=wnvote, justify="r")
-  
-
-  if (1 == nrow(x$cpt)) {
-    cat("\n  changepoint\n")
-  } else {
-    cat("\n  changepoints\n")
-  }
-
-  cat(sprintf("  %*s     %*s     %*s    %*s\n",
-              wpos, "pos", wloc, "raw", wval, "Di", wnvote, "nvote"))
-  for (i in 1:nrow(x$cpt)) {
-    cat(sprintf("  %*s    (%*s)    %*s    %*s\n",
-                wpos, spos[i], wloc, sxpos[i], wval, sval[i],
-                wnvote, snvote[i]))
-  }
-
-  cat(sprintf("\n  minimum vote needed: %4.1f\n", x$cptparam$minvote))
-  for (s in format_libs(x$voting, "from libraries", 50)) {
-    cat(s, "\n")
-  }
-  cat("  plot to see points during voting\n")
-  cat("\n")
-
-  invisible(x)
-}
-
-# Print the location of the changepoints in the Dicpt class object.  Other
-# arguments are ignored.  Returns object invisibly.
-summary.Dicpt <- function(object, ...) {
-
-  x <- object
-
-  if (0 == nrow(x$cpt)) {
-    cat("\n  no changepoints found\n\n")
-    return(invisible(object))
-  }
-
-  cat("\n")
-  for (s in format_pos(x$cpt$pos, "changepoints at indices", 50)) {
-    cat(s, "\n")
-  }
-  for (s in format_libs(x$voting, "from libraries", 50)) {
-    cat(s, "\n")
-  }
-  cat("\n")
-
-  invisible(object)
-}
-
-# Combine the point indices pos into comma-separated strings divided into
-# lines of about w characters, with first with text txt in a header and the
-# others with matching spaces.  Returns a vector of the strings, to cat
-# one by one.
-format_pos <- function(pos, txt, w) {
-
-  p <- paste0(pos, collapse=", ")
-  i <- nchar(p) %/% w
-  while (1 <= i) {
-    j <- (i * w) + 5
-    while ((1 < j) && (" " != substr(p, j, j))) {
-      j <- j - 1
-    }
-    substr(p, j,j) <- "\n"
-    i <- i - 1
-  }
-
-  p <- strsplit(p, "\n", fixed=TRUE)[[1]]
-  wtxt <- nchar(txt)
-  for (i in seq_along(p)) {
-    if (0 < nchar(txt)) {
-      if (1 == i) {
-        hdr <- sprintf("  %*s  ", wtxt, txt)
-      } else {
-        hdr <- sprintf("  %*s  ", wtxt, "")
-      }
-    } else {
-      hdr <- ""
-    }
-    p[i] <- paste0(hdr, p[i], collapse="")
-  }
-
-  p
-}
-
-# Combine the libraries libs into comma-separated strings divided into lines
-# of about w characters, the first with text txt in a header and the others
-# with matching spaces.  Returns a vector of the strings, to cat one by one.
-format_libs <- function(libs, txt, w) {
-
-  votes <- paste0(libs, collapse=", ")
-  i <- nchar(votes) %/% w
-  while (1 <= i) {
-    j <- (i * w) + 5
-    while ((1 < j) && (" " != substr(votes, j, j))) {
-      j <- j - 1
-    }
-    substr(votes, j,j) <- "\n"
-    i <- i - 1
-  }
-  
-  votes <- strsplit(votes, "\n", fixed=TRUE)[[1]]
-  wtxt <- nchar(txt)
-  for (i in seq_along(votes)) {
-    if (0 < nchar(txt)) {
-      if (1 == i) {
-        hdr <- sprintf("  %*s  ", wtxt, txt)
-      } else {
-        hdr <- sprintf("  %*s  ", wtxt, "")
-      }
-    } else {
-      hdr <- ""
-    }
-    votes[i] <- paste0(hdr, votes[i], collapse="")
-  }
-
-  votes
-}
-
-# Annotate a plot with the location of changepoints in Dicpt object x.  Pass
-# the histogram hist if drawing atop one, otherwise assume the plot is for
-# spacing.  The Diopt options opt provide graphical parameters and other
-# arguments are ignored.  Returns x invisibly.
-mark.Dicpt <- function(x, hist=NULL, opt=Diopt(), ...) {
-
-  if (0 == nrow(x$cpt)) {
-    return(x)
-  }
-
-  clr <- get.colors(opt$palette)[opt$colID.cpt]
-
-  if (is.null(hist)) {
-    axis(3, x$cpt$pos, labels=FALSE, tcl=2, lwd=0, lwd.ticks=1, col.ticks=clr)
-  } else {
-    axis(3, x$cpt$x, labels=FALSE, tcl=1.5, lwd=0, lwd.ticks=1, col.ticks=clr)
-  }
-
-  invisible(x)
-}
-
-# Create an empty Dicpt object with 0 row data frames for $test and $cpt,
-# 0 element $voting, and NULL lists for $rawpts, $rawparam, $libpts,
-# $cptparam.  0 rows/lengths should be the check used for no results.
-mockup.Dicpt <- function() {
-
-  tstcols <- c("library", "detector", "abbrev", "ncpt")
-  mtst <- matrix(0, nrow=0, ncol=length(tstcols), dimnames=list(NULL, tstcols))
-  dftst <- as.data.frame(mtst)
-
-  cptcols <- c("pos", "x", "val", "nvote")
-  mcpt <- matrix(0, nrow=0, ncol=length(cptcols), dimnames=list(NULL, cptcols))
-  dfcpt <- as.data.frame(mcpt)
-
-  vote <- logical()
-
-  res <- list(test=dftst, rawpts=NULL, rawparam=NULL, libpts=NULL,
-              voting=vote, cpt=dfcpt, cptparam=NULL)
-  class(res) <- "Dicpt"
-  res
-}
-
-# Create a tall graph with the per-detector changepoints in Dicpt object x,
-# the library union, and the overall vote.  Use palette from options opt.
-# Extra arguments are ignored.  Returns the class object invisibly.
-plot.Dicpt <- function(x, opt=Diopt(), ...) {
-
-  layout(matrix(c(1), nrow=1))
-  oldpar <- par(mar=c(5,4,4,5)+0.1, cex=1.0)
-  on.exit(par(oldpar))
-
-  lkeep <- 0 < sapply(x$libpts, length)
-
-  clrs <- get.colors(opt$palette)
-  tmp <- clrs[4]
-  clrs[4] <- clrs[7]
-  clrs[7] <- tmp
-
-  y0 <- 0
-  pts <- NULL
-  ypos <- NULL
-  pch <- NULL
-  cex <- NULL
-  llbl <- NULL
-  rlbl <- NULL
-  ltic <- NULL
-  rtic <- NULL
-  detlib <- ""
-  for (i in 1:nrow(x$test)) {
-    if (0 < x$test$ncpt[i]) {
-      ytst <- y0 + 0.5
-      pts <- c(pts, list(x$rawpts[[i]]))
-      ypos <- c(ypos, ytst)
-      pch <- c(pch, 20)
-      cex <- c(cex, 0.5)
-      rtic <- c(rtic, ytst)
-      rlbl <- c(rlbl, x$test$abbrev[i])
-      y0 <- ytst
-      detlib <- x$test$library[i]
-    }
-    if ((i == nrow(x$test)) ||
-        ((x$test$library[i] != x$test$library[i+1]) &&
-         (x$test$library[i] == detlib))) {
-      ytst <- y0 + 0.5
-      pts <- c(pts, list(x$libpts[[x$test$library[i]]]))
-      ypos <- c(ypos, ytst)
-      pch <- c(pch, 4)
-      cex <- c(cex, 1.25)
-      ltic <- c(ltic, ytst)
-      llbl <- c(llbl, x$test$library[i])
-      y0 <- y0 + 1.0
-    }
-    if ((i < nrow(x$test)) && (x$test$library[i] != x$test$library[i+1])) {
-      detlib <- ""
-    }
-  }
-
-  y0 <- y0 + 0.5
-  pts <- c(pts, list(x$cpt$pos))
-  ypos <- c(ypos, y0)
-  pch <- c(pch, 4)
-  cex <- c(cex, 1.25)
-  ltic <- c(ltic, y0)
-  llbl <- c(llbl, "all")
-
-  plot(0, 0, col=NA, xlab="index", ylab=NA, main="Changepoint Locations",
-       mar=par("mar")+c(0,0,0,2), yaxt="n",
-       xlim=c(0,x$rawparam$nx+1), ylim=range(ypos))
-
-  # Reserve color 1 for the top row.
-  clrID <- 2
-  for (i in seq_along(pts)) {
-    if (i == length(pts)) {
-      colID <- 1
-    }
-    points(pts[[i]], rep(ypos[i],length(pts[[i]])), col=clrs[clrID],
-           pch=pch[i], cex=cex[i])
-    if (4 == pch[i]) {
-      for (p in pts[[i]]) {
-        lines(c(p+x$cptparam$near, p-x$cptparam$near), c(ypos[i], ypos[i]),
-              col=clrs[clrID])
-      }
-      
-      clrID <- clrID + 1
-      if (length(clrs) < clrID) {
-        clrID <- 2
-      }
-    }
-  }
-
-  ylo <- ypos[1] - 0.2
-  yhi <- ypos[length(ypos)-1] + 0.2
-  for (p in x$cpt$pos) {
-    rect(p-x$cptparam$near, ylo, p+x$cptparam$near, yhi,
-         col=rgb(t(col2rgb(clrs[1]) / 255), alpha=0.1), border=NA)
-  }
-
-  # Stagger the library names to avoid dropping because of overlaps.  The
-  # axis function doesn't actually tell us which labels were skipped,
-  # otherwise we could just put them in the margin.
-  axis(2, at=ltic, labels=FALSE)
-  sel <- seq(1, length(ltic), by=2)
-  axis(2, at=ltic[sel], labels=llbl[sel], tick=FALSE)
-  sel <- seq(2, length(ltic), by=2)
-  # lty=0 to not draw the line/ticks, only the label.
-  axis(2, at=ltic[sel], labels=llbl[sel], line=1.5, lty=0)
-  axis(4, at=rtic, labels=rlbl, las=2, cex.axis=0.8*par("cex.axis"))
-
-  invisible(x)
 }
 
 

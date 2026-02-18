@@ -57,9 +57,7 @@ in count and in length.  There is also a bias towards sections at the start
 of the data rather than the end due to how the algorithm incrementally
 chooses the starting point of the next section.  In fact, the detector places
 a minimum length of 5 on intervals at the end to prevent fragmenting the last.
-The detector cannot be used on its own to locate modes, but it can be taken
-into the changepoint voting where other algorithms can reduce the impact of
-its noisy performance.
+The detector cannot be used on its own to locate modes.
 
 The analysis is O(\code{n^2}) in time and O(\code{n}) in memory.  If the
 data contains integers they are converted to reals.  Other data types are
@@ -82,7 +80,7 @@ There is no way to judge the significance of any section.
 }
 
 \seealso{
- \code{\link{Dicpt}}, \code{modeHunting} in the \pkg{modehunt} package
+ \code{modeHunting} in the \pkg{modehunt} package
 }
 
 \keyword{Dimodal}

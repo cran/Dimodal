@@ -4,10 +4,9 @@
 # and flats to modes.  Detect and evaluate features in spacing after low-pass
 # filtering with height or length or aspect ratio models or excursion/
 # bootstrap simulations, in interval spacing as excursions or in statistics
-# of signed runs or longest or permutation simulation, or in raw spacing via
-# changepoints.
+# of signed runs or longest or permutation simulation.
 #
-# c 2024-2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2024-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
 #
@@ -17,8 +16,8 @@
 #### Public Interface
 
 # Perform a modality analysis on data vector x using low-pass spacing if 
-# Diopt('analysis') includes 'lp', interval spacing with 'diw', and
-# changepoints/raw spacing with 'cpt'; more than one method can be chosen.
+# Diopt('analysis') includes 'lp', interval spacing with 'diw';
+# more than one method can be chosen.
 # opt sets the # Diopt analysis parameters.  The return value is a list of
 # class 'Dimodal' with elements added per the analyze.* functions.
 Dimodal <- function(x, opt=Diopt()) {
@@ -38,9 +37,6 @@ Dimodal <- function(x, opt=Diopt()) {
   }
   if ("diw" %in% opt$analysis) {
     res <- c(res, analyze.diw(res$data, res$opt))
-  }
-  if ("cpt" %in% opt$analysis) {
-    res <- c(res, analyze.cpt(res$data, res$opt))
   }
 
   class(res) <- "Dimodal"
@@ -337,32 +333,6 @@ analyze.diw <- function(d, opt) {
   if (get("._TIMEIT", envir=._timer.env)) {  stop.timer("TIMER_DIW") }
   
   return(list(diw.peaks=pk, diw.flats=ft))
-}
-
-# Run all changepoint detectors available on the system on the spacing in
-# Didata d, using the $cpt.libs specification in the Diopt options list opt
-# to modify the choice.  Combine the results into a master list of
-# changepoints using majority voting.  Returns a list with element
-#   $cpt      per-library and common changepoints
-# where the contents of cpt are specified in identify.cpt() and merge.cpt().
-analyze.cpt <- function(d, opt) {
-
-  if (is.null(d) || (0 == nrow(d)) || !("Di" %in% rownames(d))) {
-    return(list(cpt=mockup.Dicpt()))
-  }
-
-  if (get("._TIMEIT", envir=._timer.env)) { start.timer("TIMER_CPT") }
-
-  cpt <- find.cpt(d["Di",-1L],
-                  opt$cpt.libs, opt$cpt.fncpt.max, opt$cpt.timeout,
-                  opt$cpt.qvote, opt$cpt.sep, opt$cpt.fsep, opt$cpt.libsep)
-
-  cpt$cpt <- shiftID.place(cpt$cpt, 2, d["xmid",], 0)
-  attr(cpt, "source") <- "Di"
-  
-  if (get("._TIMEIT", envir=._timer.env)) {  stop.timer("TIMER_CPT") }
-  
-  list(cpt=cpt)
 }
 
 

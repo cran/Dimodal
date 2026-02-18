@@ -2,7 +2,7 @@
 # sigtests.R -
 # Feature significance tests.
 #
-# c 2024-2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2024-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
 # - 
@@ -1125,13 +1125,28 @@ mkv.stationary <- function(tmat) {
   ttmat <- t(tmat)
   ev <- eigen(ttmat)
 
-  if (1e-4 < abs(Mod(ev$values[1] - 1))) {
+  # Stationary state is not valid if largest left eigenvalue is not 1.
+  if (1e-4 < abs(Mod(ev$values[1]) - 1)) {
     dummy <- rep(NA_real_, ncol(tmat))
     names(dummy) <- colnames(tmat)
     dummy
   } else {
     smat <- ttmat %*% ev$vectors
-    Re(smat[,1] / sum(smat[,1]))
+    scl <- Mod(colSums(smat))
+
+    # Or if we cannot normalize.  In case of tied eigenvalues we need to
+    # check all corresponding eigenvectors to see if any are good =
+    # eigenvalue at 1 and sum of stationary state not 0.  Note that the
+    # scale is unsigned but the final normalization is signed.
+    valid <- (Mod(ev$values) - 1) < 1e-4
+    i <- which.max(scl)
+    if (!valid[i] || (scl[i] < 1e-4)) {
+      dummy <- rep(NA_real_, ncol(tmat))
+      names(dummy) <- colnames(tmat)
+      dummy
+    } else {
+      Re(smat[,i] / sum(smat[,i]))
+    }
   }
 }
 

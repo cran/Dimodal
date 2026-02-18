@@ -5,7 +5,7 @@
 
       Compiled into shared library for R, not an executable.
 
-      c 2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+      c 2025-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 *****/
 
 
@@ -386,7 +386,7 @@ static void segment_midrun(SEXP Rx, int *rl, int *nskip,
 	i = 0;
 	while ((i < nseg) && (l < nx)) {
 		r = l + rl[l] + nskip[l];
-		xr = ACCESS_XDI(xd, xi, r);
+		xr = ACCESS_XDI(xd, xi, (nx <= r) ? (nx - 1) : r);
 		xseg[i] = xl;
 		qseg[i] = (l + ((rl[l] - 1) / 2.0)) / (nx - 1.0);
 		i += 1;

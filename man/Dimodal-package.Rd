@@ -14,8 +14,7 @@ The \pkg{Dimodal} package uses the spacing of data, or difference between
 order statistics, to detect and locate modes or the transition between them.
 Consistent spacing with stable values appears within a mode, while it
 increases at the anti-modes.  The package contains parametric and
-non-parametric tests of features detected within the spacing, and can use
-any changepoint detectors installed on the system as a separate check.
+non-parametric tests of features detected within the spacing.
 }
 
 \section{Main Interface}{
@@ -41,11 +40,8 @@ the spacing.
   peaks into larger.
 \item \code{\link{find.flats}} identifies flat or consistent stretches of
   values.
-\item \code{\link{find.cpt}} is a majority voting scheme using external
-  changepoint algorithms to identify a common set of points where the behavior
-  of data changes.
 \item \code{\link{find.level.sections}} is an inversion of the \pkg{modehunt}
-  changepoint detector and can be added to the voting list.
+  changepoint detector.
 }
 }
 
@@ -97,10 +93,16 @@ analysis.
 \item \code{\link{match.features}} uses distance and overlap criteria to
   identify features found in both the low-pass and interval spacing.
 \item \code{\link{shiftID.place}} moves the results of
-  \code{\link{find.peaks}}, \code{\link{find.flats}}, and
-  \code{\link{find.cpt}} to the original data grid and converts any indices
+  \code{\link{find.peaks}} and \code{\link{find.flats}}
+  to the original data grid and converts any indices
   into raw values using the midquantile approximation.
 }
+}
+
+\section{Version}{
+This version of the package does not include the changepoint analysis of
+the spacing.  The full version is available at
+\url{https://www.primachvis.com/data/Dimodal_latest.tar.gz}.
 }
 
 \author{

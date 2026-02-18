@@ -3,7 +3,7 @@
 # Load the Dimethod files.  Not really a test bench, this is for loading all
 # code at the console.
 #
-# c 2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2025-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 
 if (interactive()) {
@@ -12,7 +12,6 @@ if (interactive()) {
   source('../R/methods.R')
   source('../R/detectors.R')
   source('../R/sigtests.R')
-  source('../R/cpt.R')
   source('../R/Ditrack.R')
   source('../R/utility.R')
 

@@ -2,7 +2,7 @@
 # eval_Dimodal.Rchar -
 # Evaluation of Dimodal functions.
 #
-# c 2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2025-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
 # - 
@@ -14,7 +14,6 @@ if (interactive()) {
   source('../R/methods.R')
   source('../R/detectors.R')
   source('../R/sigtests.R')
-  source('../R/cpt.R')
   source('../tests/test_common.Rtest')
 
   if (is.loaded('C_find_peaks', PACKAGE='Dimodal')) {

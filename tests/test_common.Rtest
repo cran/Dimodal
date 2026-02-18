@@ -3,7 +3,7 @@
 # Test bench framework functions for b.v. comparing results.  Creates a global
 # allpass to hold the overall pass/fail state of a test bench.
 #
-# c 2024-2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2024-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 
 allpass <- TRUE
@@ -214,6 +214,27 @@ verify.warning <- function(testID, cmd, args) {
   err <- tryCatch({ do.call(cmd, args) ; FALSE }, warning=function(e) { TRUE })
   if (!err) {
     cat('    test ', testID, ' did not generate warning\n')
+    passed <- FALSE
+  }
+
+  if (!passed) {
+    allpass <<- FALSE
+  }
+  passed
+}
+
+# Test that the value returned from evaluating cmd with its arguments args
+# wrapped in a list has 0 rows.  Treat errors as failures.  Add testID to
+# any failure message and set the global allpass to FALSE.  Returns TRUE if
+# the test passes.
+verify.empty <- function(testID, cmd, args) {
+
+  passed <- TRUE
+
+  res <- tryCatch( do.call(cmd, args),
+                   error=function(e) { matrix(1, nrow=1, ncol=1) })
+  if (0 != nrow(res)) {
+    cat('    test ', testID, ' result did not have 0 rows\n')
     passed <- FALSE
   }
 

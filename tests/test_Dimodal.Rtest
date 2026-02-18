@@ -2,7 +2,7 @@
 # test_Dimodal.Rtest:
 # Test bench for the Dimodal() function.
 #
-# c 2024-2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2024-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
 # - 
@@ -16,7 +16,6 @@ if (interactive()) {
   source('../R/detectors.R')
   source('../R/sigtests.R')
   source('../R/utility.R')
-  source('../R/cpt.R')
 
   if (is.loaded('C_find_peaks', PACKAGE='Dimodal')) {
     dyn.unload('../src/Dimodal.so')
@@ -28,7 +27,6 @@ if (interactive()) {
   gen.data <- Dimodal:::gen.data
   mockup.Dipeak <- Dimodal:::mockup.Dipeak
   mockup.Diflat <- Dimodal:::mockup.Diflat
-  mockup.Dicpt <- Dimodal:::mockup.Dicpt
 }
 
 source('../tests/test_common.Rtest')
@@ -232,10 +230,10 @@ verify.flats <- function(testID, ft1, ft2) {
 }
 
 # Check that the data frame/matrix d has no rows but the same columns as
-# Dipeak/Diflat/Dicpt/Didata.  Returns TRUE if so, or FALSE if the data is
+# Dipeak/Diflat/Didata.  Returns TRUE if so, or FALSE if the data is
 # not empty.  On failure the global variable allpass is also set to FALSE.
 # testID is an identifier used in the failure messages.
-verify.empty <- function(testID, d) {
+verify.mockup <- function(testID, d) {
 
   passed <- TRUE
   
@@ -253,14 +251,6 @@ verify.empty <- function(testID, d) {
       passed <- FALSE
     } else if (0 != length(setdiff(colnames(d), colnames(mockup.Diflat())))) {
       cat('    test ', testID, ' fails for column mis-match\n')
-      passed <- FALSE
-    }
-  } else if ('Dicpt' %in% class(d)) {
-    if (0 != nrow(d)) {
-      cat('    test ', testID, ' fails because data not empty\n')
-      passed <- FALSE
-    } else if (0 != length(setdiff(names(d), names(mockup.Dicpt())))) {
-      cat('    test ', testID, ' fails for element mis-match\n')
       passed <- FALSE
     }
   } else if ('Didata' %in% class(d)) {
@@ -806,10 +796,10 @@ verify.warning('BTP 5', Dimodal, list(c(1,3,1,3,1,3)))
 Diopt(NULL)
 Diopt(lp.tests=NULL, diw.tests=NULL, analysis=c('lp', 'diw'))
 m <- Dimodal(tstds1)
-verify.empty('BTP 6 LP peak', m$lp.peaks)
-verify.empty('BTP 6 Diw peak', m$diw.peaks)
-verify.empty('BTP 6 LP flat', m$lp.flats)
-verify.empty('BTP 6 Diw flat', m$diw.peaks)
+verify.mockup('BTP 6 LP peak', m$lp.peaks)
+verify.mockup('BTP 6 Diw peak', m$diw.peaks)
+verify.mockup('BTP 6 LP flat', m$lp.flats)
+verify.mockup('BTP 6 Diw flat', m$diw.peaks)
 
 
 Diopt(NULL)

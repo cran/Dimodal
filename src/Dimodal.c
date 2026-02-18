@@ -6,7 +6,7 @@
 
       Shared library for R, not an executable.
 
-      c 2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+      c 2025-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 *****/
 
 

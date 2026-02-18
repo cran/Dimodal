@@ -1,0 +1,8 @@
+
+Version History
+
+v1.0.3  [17 Feb 26] - bugfix: ordering evals for runlen stationary state
+v1.0.2  [ 8 Feb 26] - create CRAN version without changepoint support
+v1.0.1  [13 Jan 26] - bugfixes: OOB index, support index/tests, fn prototype,
+                                find flats data validity
+v1.0.0  [20 Nov 25] - initial release

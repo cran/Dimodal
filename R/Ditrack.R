@@ -3,7 +3,7 @@
 # Mode tree / SiZer type tracking of feature significance as the kernel size/
 # interval width varies.
 #
-# c 2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2025-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
 # - 

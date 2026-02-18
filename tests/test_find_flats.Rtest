@@ -2,7 +2,7 @@
 # test_find_flats.Rtest:
 # Test benches for the find.flats detector.
 #
-# c 2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2025-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
 # - 
@@ -10,6 +10,7 @@
 
 if (interactive()) {
   source('../R/detectors.R')
+  source('../R/methods.R')
 
   if (is.loaded('C_find_flats', PACKAGE='Dimodal')) {
     dyn.unload('../src/Dimodal.so')
@@ -33,6 +34,14 @@ find.flats.ver <- function(x, fripple=eval(formals(find.flats)[['fripple']]),
                            fminlen=eval(formals(find.flats)[['fminlen']]),
                            noutlier=eval(formals(find.flats)[['noutlier']]),
                            ver=0L) {
+  # Still need to do prep work that find.flats does.
+  if (!is.vector(x)) {
+    x <- as.vector(x)
+  }
+  if (sum(is.finite(x)) < 2) {
+    return(mockup.Diflat())
+  }
+  
   as.data.frame(
     .Call('C_find_flats', x, fripple, minlen, fminlen, noutlier, ver,
           PACKAGE='Dimodal')
@@ -707,9 +716,15 @@ verify.empty('BTP14',  find.flats, list(NULL, 0.05, 20, 0.02, 1))
 verify.empty('BTP15',  find.flats, list(vector('numeric',0), 0.05, 20, 0.02, 1))
 verify.empty('BTP16',  find.flats, list(c(1.01), 0.05, 20, 0.02, 1))
 
-# Unsupported value type.
-verify.error('BTP17a',find.flats, list(rep(NA_logical_, 30), 0.05, 20, 0.05, 1))
-verify.error('BTP17b',find.flats, list(rep(NA_complex_, 30), 0.05, 20, 0.05, 1))
+# Unsupported value types.
+x <- rep(c(TRUE, TRUE, FALSE, FALSE), 10)
+verify.error('BTP17a', find.flats, list(x, 0.05, 20, 0.05, 1))
+x <- 1 + (1i * (1:30))
+verify.error('BTP17b', find.flats, list(x, 0.05, 20, 0.05, 1))
+# The screening for non-finite values takes precedence over the data type
+# check.
+x <- rep(NA_complex_, 30)
+verify.empty('BTP17c', find.flats, list(x, 0.05, 20, 0.05, 1))
 
 
 if (allpass) {

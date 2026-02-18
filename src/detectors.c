@@ -6,7 +6,7 @@
 
       Compiled into shared library for R, not an executable.
 
-      c 2024-2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+      c 2024-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 *****/
 
 
@@ -951,6 +951,9 @@ static SEXP impl_flats_mmtree(SEXP Rx,
 	}
 
 	stats_meansd(Rx, &stat);
+	if (0 == stat.ndata) {
+		error("no finite data values to find flats");
+	}
 
 	srcs = (struct flatsrc *) R_alloc(stat.ndata, sizeof(*srcs));
 	flats = (int *) R_alloc(stat.ndata, sizeof(*flats));
@@ -1505,8 +1508,9 @@ static void set_heights(struct mmdata *mm, int pkID) {
 /***
     build_peaks:  Create an R list (generic vector) with all values 
                   describing the extrema following the find_peaks interface. 
-                  If nmm is 0 neither rsd nor mm will be accessed, so pass
-                  NULL for them; the vectors returned will all have length 0.
+                  Finds support.  If nmm is 0 neither rsd nor mm will be 
+                  accessed, so pass NULL for them; the vectors returned will
+                  all have length 0.
     args:         rsd - data, standardized, for each run
                   xpos - mid-run index of rsd point in original data
                   mm - local extrema
@@ -1658,11 +1662,15 @@ static SEXP build_peaks(double *rsd, int *xpos, struct mmdata *mm, int nmm,
 			} else {
 				xsupp = rval[mmID] - (fhsupp * rlht[mmID]);
 				for (i=mm[mmmap[mmID]].runID; mm[mmmap[mmID-1]].runID<=i; i--) {
-					if (rsd[i] < xsupp) {
+					/* Pick first point <= xsupp threshold. */
+					if (fabs(rsd[i] - xsupp) < DBL_EPSILON) {
+						break;
+					} else if (rsd[i] < xsupp) {
 						break;
 					}
 				}
 				i += 1;
+				/* The +1 here is for R indexing. */
 				lsupp[mmID] = xpos[i] + 1;
 			}
 		}
@@ -1675,7 +1683,9 @@ static SEXP build_peaks(double *rsd, int *xpos, struct mmdata *mm, int nmm,
 			} else {
 				xsupp = rval[mmID] - (fhsupp * rrht[mmID]);
 				for (i=mm[mmmap[mmID]].runID; i<=mm[mmmap[mmID+1]].runID; i++) {
-					if (rsd[i] < xsupp) {
+					if (fabs(rsd[i] - xsupp) < DBL_EPSILON) {
+						break;
+					} else if (rsd[i] < xsupp) {
 						break;
 					}
 				}

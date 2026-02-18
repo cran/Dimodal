@@ -55,7 +55,6 @@ The basic data stored in the matrix contains the rows
  \item{\code{xmid}}{ the mid-distribution from \code{midquantile} }
  \item{\code{Di}}{ the spacing; index 1 is NA
    \nl }
-This is enough to run the changepoint analysis.
 
 If low-pass spacing is required, \code{Dimodal} adds the row
  \item{\code{lp}}{ spacing after low-pass filtering
@@ -106,9 +105,7 @@ The methods return the object, invisibly.
 }
 
 \examples{
-## We override the analysis option to avoid changepoints,
-## which may not be available.
-m <- Dimodal(faithful$eruptions, Diopt.local(analysis=c('diw','lp'), diw.window=16))
+m <- Dimodal(faithful$eruptions, Diopt.local(diw.window=16))
 m$data
 }
 

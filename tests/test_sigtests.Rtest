@@ -2,7 +2,7 @@
 # test_sigtests.Rtest:
 # Test benches for the feature significance evaluators.
 #
-# c 2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2025-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
 # - 
@@ -1016,8 +1016,9 @@ verify.vectors('RL8', prl$p.value, exp.rl)
 ## Bad data from interactive testing.
 
 exp <- rep(NA_real_, 3)
+exp <- c(NA_real_, 1, NA_real_)
 prl <- Dirunlen.test(c(NA,NA,0,1,-1,0), c(NA,4,NA), c(NA,6,NA), 0)
-verify.vectors('RL9', prl$p.value, exp)
+verify.vectors('RL11', prl$p.value, exp)
 
 ## Stress tests.
 

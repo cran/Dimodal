@@ -66,9 +66,8 @@ As described in Details.
 \section{Parameters: Data Preparation}{
 \describe{
 \item{\code{analysis} <string>}{ \optcr
-  which type of spacing to analyze, one or more of "lp", "diw", and "cpt"
-  (case-insensitive) for using a low-pass filter, interval spacing, or raw
-  spacing and changepoints
+  which type of spacing to analyze, one or both of "lp" and "diw"
+  (case-insensitive) for using a low-pass filter or interval spacing.
 }
 \item{\code{data.midq} <integer with valid midquantile type>}{ \optcr
   approximation method to convert quantiles or indices to original data,
@@ -213,38 +212,6 @@ As described in Details.
 }
 }
 
-\section{Parameters: Changepoint Detectors}{
-\describe{
-\item{\code{cpt.libs} <string>}{ \optcr
-  vector of changepoint packages to use (name preceded by +) or ignore (by -)
-}
-\item{\code{cpt.maxfncpt} <fraction>}{ \optcr
-  maximum fraction of data allowed to be changepoints, before ignoring
-  library results
-}
-\item{\code{cpt.qvote} <pair of fractions>}{ \optcr
-  vector of two quantiles specifying range of number of changepoints per
-  library allowed based on counts from all libraries
-}
-\item{\code{cpt.fsep} <fraction>}{ \optcr
-  maximum separation between changepoints as fraction of data to consider as
-  same point
-}
-\item{\code{cpt.sep} <positive integer>}{ \optcr
-  separation in data (number of points) between changepoints before merging
-  or treating library results as one
-}
-\item{\code{cpt.libsep} <positive integer incl. 0>}{ \optcr
-  separation in data (number of points) between changepoints when merging
-  the variants within a library, if zero take union of all points
-}
-\item{\code{cpt.timeout} <positive value>}{ \optcr
-  time-out in seconds per CPT algorithm before abandoning library method,
-  0 for no limit
-}
-}
-}
-
 \section{Parameters: Other}{
 \describe{
 \item{\code{track.maxwindow} <fraction or positive integer>}{ \optcr
@@ -282,17 +249,13 @@ As described in Details.
 \item{\code{colID.flat} <integer 1 t/m 8>}{ \optcr
   index in the palette when marking the flats with boxes around the feature
 }
-\item{\code{colID.cpt} <integer 1 t/m 8>}{ \optcr
-  index in the palette when marking the changepoints with ticks along the
-  upper edge of the graph
-}
 \item{\code{digits} <positive integer incl. 0>}{ \optcr
   number of significant digits to use when printing raw values, if 0 then
   use \code{options("digits")}
 }
 \item{\code{mark.alpha} <logical>}{ \optcr
-  TRUE to use ANSI escape codes when printing probabilities to compare them
-  against the alpha levels, FALSE to not add any formatting
+  TRUE to use ANSI underlining escape codes when printing probabilities to
+	compare them against the alpha levels, FALSE to not add any formatting
 }
 \item{\code{mark.flat} <string>}{ \optcr
   how to indicate flats in a plot, one of "box" or "bar" (case-insensitive)

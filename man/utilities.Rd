@@ -65,7 +65,7 @@ shiftID.place(feat, offset, xmid, midoff)
   tolerance for matching values, per \code{find.runs}
 }
 \item{feat}{
-  a \opt{Dipeak}, \opt{Diflat}, or \opt{Dicpt} data frame
+  a \opt{Dipeak} or \opt{Diflat} data frame
 }
 \item{offset}{
   an integer, the amount to shift position of peaks or points or endpoints
@@ -148,17 +148,17 @@ NA, 0, and negative values are acceptable.
 
 The \code{shiftID.place} function is used in Dimodal to modify the
 placement of features, and is provided separately if the detectors
-\code{find.peaks}, \code{find.flats}, or \code{find.cpt} are called
+\code{find.peaks} or \code{find.flats} are called
 directly.  It adds \code{offset} to the columns \opt{pos}, \opt{stID},
 \opt{endID}, \opt{lminID}, \opt{rminID}, \opt{lsuppID}, and \opt{rsuppID}
 if they exist in the features data frame to account for values skipped
-during filtering.  Use the \opt{lp.stID} attribute for low-pass features,
-\opt{diw.stID} for interval spacing, and 2 for changepoints.  If pos, stID,
+during filtering.  Use the \opt{lp.stID} attribute for low-pass features
+and \opt{diw.stID} for interval spacing.  If pos, stID,
 or endID are in the data frame the function also adds columns \opt{x},
 \opt{xst}, and \opt{xend} respectively with the original data value for
 the index by using the midquantile result \code{xmid}.  Here the index is
-further modified by \code{midoff}; use 0 for low-pass features and
-changepoints, and half the interval width, stored as attribute \opt{wdiw}.
+further modified by \code{midoff}; use 0 for low-pass features 
+or half the interval width, stored as attribute \opt{wdiw}.
 }
 
 \value{
@@ -205,8 +205,6 @@ Asymptotic properties of sample quantiles of discrete distributions.
  \code{\link{Dipeak}},
  \code{\link{find.flats}},
  \code{\link{Diflat}},
- \code{\link{find.cpt}},
- \code{\link{Dicpt}},
  \code{\link{ecdf}}
 }
 

@@ -2,7 +2,7 @@
 # test_find_lvlsec.Rtest:
 # Test benches for the find.level.sections detector.
 #
-# c 2025 Greg Kreider, Primordial Machine Vision Systems, Inc.
+# c 2025-2026 Greg Kreider, Primordial Machine Vision Systems, Inc.
 
 ## To Do:
 # - 
