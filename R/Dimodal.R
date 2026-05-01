@@ -83,7 +83,7 @@ analyze.lp <- function(d, opt) {
     if (get("._TIMEIT", envir=._timer.env)) { start.timer("TIMER_LPPEAK") }
     pk <- find.peaks(lpdi, opt$peak.fht, opt$peak.frelht, opt$peak.fhtie,
                      opt$peak.fhsupp)
-    pk <- shiftID.place(pk, a$lp.stID, d["xmid",], 0)
+    pk <- shiftID.place(pk, a$lp.stID, d["xmid",])
     hts <- pmax(pk$lht, pk$rht)
     nsig <- rep(0L, nrow(pk))
     if (get("._TIMEIT", envir=._timer.env)) {  stop.timer("TIMER_LPPEAK") }
@@ -131,7 +131,7 @@ analyze.lp <- function(d, opt) {
     if (get("._TIMEIT", envir=._timer.env)) { start.timer("TIMER_LPFLAT") }
     ft <- find.flats(lpdi, opt$flat.fripple, opt$flat.minlen, opt$flat.fminlen,
                      opt$flat.noutlier)
-    ft <- shiftID.place(ft, a$lp.stID, d["xmid",], 0)
+    ft <- shiftID.place(ft, a$lp.stID, d["xmid",])
     nsig <- rep(0L, nrow(ft))
     if (get("._TIMEIT", envir=._timer.env)) {  stop.timer("TIMER_LPFLAT") }
 
@@ -210,7 +210,7 @@ analyze.diw <- function(d, opt) {
     if (get("._TIMEIT", envir=._timer.env)) { start.timer("TIMER_DIWPEAK") }
     pk <- find.peaks(diw, opt$peak.fht, opt$peak.frelht, opt$peak.fhtie,
                      opt$peak.fhsupp)
-    pk <- shiftID.place(pk, a$diw.stID, d["xmid",], -floor(a$wdiw/2))
+    pk <- shiftID.place(pk, a$diw.stID, d["xmid",])
     nsig <- rep(0L, nrow(pk))
     if (get("._TIMEIT", envir=._timer.env)) {  stop.timer("TIMER_DIWPEAK") }
                        
@@ -299,7 +299,7 @@ analyze.diw <- function(d, opt) {
     if (get("._TIMEIT", envir=._timer.env)) { start.timer("TIMER_DIWFLAT") }
     ft <- find.flats(diw, opt$flat.fripple, opt$flat.minlen, opt$flat.fminlen,
                      opt$flat.noutlier)
-    ft <- shiftID.place(ft, a$diw.stID, d["xmid",], -floor(a$wdiw/2))
+    ft <- shiftID.place(ft, a$diw.stID, d["xmid",])
     nsig <- rep(0L, nrow(ft))
     if (get("._TIMEIT", envir=._timer.env)) {  stop.timer("TIMER_DIWFLAT") }
     
@@ -496,7 +496,7 @@ fir.kernel <- function(x, opt) {
     # width is 6*sigma - 1, ie. s=1 => diameter 5/radius 2, s=2 => d 11/r 5.
     sigmasq <- 2 * ((wlp + 1) / 6)^2
     wseq <- (1:wlp) - (wlp / 2)
-    kernel <- exp(-(((wlp/2) - (1:wlp))^2)/sigmasq) / sqrt(sigmasq * pi)
+    kernel <- exp(-((((wlp+1)/2) - (1:wlp))^2)/sigmasq) / sqrt(sigmasq * pi)
   } else {
     if ("hamming" == filter) {
       f <- pi * (0:(wlp-1)) / (wlp - 1)

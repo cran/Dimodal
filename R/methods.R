@@ -599,7 +599,7 @@ print.Dipeak <- function(x, ...) {
         minraw <- sprintf("%*s - %*s (%*s - %*s)", wmin, slm[i], wmin, srm[i],
                           wxmin, sxlm[i], wxmin, sxrm[i])
       } else {
-        posraw <- sprintf("%*s", wpos, spos[i], wx, "")
+        posraw <- sprintf("%*s", wpos, spos[i])
         minraw <- sprintf("%*s - %*s", wmin, slm[i], wmin, srm[i])
       }
       cat(sprintf("  %s    %*s%s    %*s%*s - %*s\n",
@@ -1203,7 +1203,7 @@ print.Didata <- function(x, ...) {
                a$wlp, flp, a$lp.kernel))
     sID <- paste0(format(a$lp.stID, width=wid), " - ",
                   format(a$lp.endID, width=wid), sep="")
-    xlp <- x["Di",a$lp.stID:a$lp.endID]
+    xlp <- x["lp",a$lp.stID:a$lp.endID]
     xstat <- rbind(xstat,
                    c("LP Di", sID, format(diff(range(xlp)), digits=dgt),
                      format(sd(xlp), digits=dgt)))

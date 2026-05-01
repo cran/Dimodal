@@ -548,7 +548,9 @@ Dipermht.test <- function(ht, xbase, nperm, lower.tail=TRUE, seed=0) {
     # permutations.
     if (lfactorial(length(xbase)) < (log(nperm) - log(0.05))) {
       permht <- apply(permute.all.alt(xbase), 1,
-                      function(r) { diff(range(cumsum(r))) })
+                      function(r) {
+                        cp <- cumsum(r)
+                        max(cp) - min(0, cp[length(cp)]) })
     } else {
       gspec <- setup.permute(xgrp)
       permht <- replicate(nperm, alt.permute(xbase, gspec))
@@ -1261,7 +1263,7 @@ alt.permute <- function(x, grpspec, raw=FALSE) {
     # This is the old height, suitable for flats.
     # diff(range(cumsum( perm )))
     cp <- cumsum(perm)
-    max(cp) - min(cp[1L], cp[length(cp)])
+    max(cp) - min(0, cp[length(cp)])
   }
 }
 

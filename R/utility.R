@@ -206,10 +206,8 @@ match.features <- function(m, near=10, foverlap=0.70, nomatch=NA_integer_,
 # from the gen.data matrix).  Add columns 'x' (for peaks), 'xst, 'xend' to
 # the matrix with the position mapped back into the original data using the
 # mid-distribution xmid, per the discrete quantile correction of
-# Ma/Genton/Parzen.  Additional offset midoff is added to the index when
-# addressing xmid; use 0 for low-pass/raw spacing positions or half the
-# interval.  Returns the modified feat.
-shiftID.place <- function(feat, offset, xmid, midoff) {
+# Ma/Genton/Parzen.  Returns the modified feat.
+shiftID.place <- function(feat, offset, xmid) {
 
   if (0 == nrow(feat)) {
     return(feat)
@@ -219,7 +217,7 @@ shiftID.place <- function(feat, offset, xmid, midoff) {
 
   if ("pos" %in% colnames(feat)) {
     feat$pos <- feat$pos + offset - 1
-    feat$x <- xmid[feat$pos+midoff]
+    feat$x <- xmid[feat$pos]
   }
   if ("lminID" %in% colnames(feat)) {
     feat$lminID <- feat$lminID + offset - 1
@@ -233,13 +231,16 @@ shiftID.place <- function(feat, offset, xmid, midoff) {
   if ("rsuppID" %in% colnames(feat)) {
     feat$rsuppID <- feat$rsuppID + offset - 1
   }
+  if ("src" %in% colnames(feat)) {
+    feat$src <- feat$src + offset - 1
+  }
   if ("stID" %in% colnames(feat)) {
     feat$stID <- feat$stID + offset - 1
-    feat$xst <- xmid[feat$stID+midoff]
+    feat$xst <- xmid[feat$stID]
   }
   if ("endID" %in% colnames(feat)) {
     feat$endID <- feat$endID + offset - 1
-    feat$xend <- xmid[feat$endID+midoff]
+    feat$xend <- xmid[feat$endID]
   }
 
   feat

@@ -1340,7 +1340,7 @@ stID <- 38
 endID <- 232
 dsign <- sign(diff(diw[stID:endID]))
 runs <- rle(dsign) ; runs <- runs$lengths * runs$values
-exp <- list(statistic=27, p.value=0.0029, critval=c(19, 21, 25, 26))
+exp <- list(statistic=27, p.value=0.0029, critval=c(20, 22, 26, 27))
 pht <- Dipermht.test(diff(range(cumsum(dsign))), runs, 5000, FALSE, 3)
 verify.permht('permht 3', pht, exp)
 
@@ -1352,7 +1352,7 @@ endID <- 82
 dsign <- sign(diff(diw[stID:endID]))
 runs <- rle(dsign) ; runs <- runs$lengths * runs$values
 # Note mid-quantile approximation in middle of equal values.
-exp <- list(statistic=1, p.value=0.5, critval=c(1,1,1,1))
+exp <- list(statistic=1, p.value=0.25, critval=c(1,1,1,1))
 pht <- Dipermht.test(diff(range(cumsum(dsign))), runs, 5000, FALSE, 2)
 verify.permht('permht 4', pht, exp)
 
@@ -1470,13 +1470,13 @@ pht <- Dipermht.test(diff(range(cumsum(dsign))), NULL, 4000, FALSE, 3)
 verify.permht('BTP PH7', pht, exp)
 
 # See permht 3 for critval change.
-exp <- list(statistic=c(NA, NaN), p.value=c(NA, NA), critval=c(19, 21, 25, 26))
+exp <- list(statistic=c(NA, NaN), p.value=c(NA, NA), critval=c(20, 22, 26, 27))
 pht <- Dipermht.test(c(NA, NaN), runs, 4000, FALSE, 3)
 verify.permht('BTP PH8', pht, exp)
 
 # See permht 3 for p.value and critval.
 exp <- list(statistic=c(26.5, 28), p.value=c(0.0036, 0.0015),
-            critval=c(19, 21, 25, 26))
+            critval=c(20, 22, 26, 27))
 pht <- Dipermht.test(c(26.5, 28), runs, 4000, FALSE, 3)
 verify.permht('BTP PH9', pht, exp)
 
@@ -1491,7 +1491,7 @@ verify.error('BTP PH11c', Dipermht.test, list(27, runs, NaN, FALSE, 3))
 verify.error('BTP PH11d', Dipermht.test, list(27, runs, Inf, FALSE, 3))
 verify.error('BTP PH11e', Dipermht.test, list(27, runs, 0, FALSE, 3))
 
-exp <- list(statistic=27, p.value=0.0029, critval=c(19, 21, 25, 26))
+exp <- list(statistic=27, p.value=0.0029, critval=c(20, 22, 26, 27))
 pht <- Dipermht.test(diff(range(cumsum(dsign))), runs, c(4000.1,5000), FALSE, 3)
 verify.permht('BTP PH12', pht, exp)
 
@@ -1504,34 +1504,37 @@ exp <- list(statistic=NA, p.value=NA, critval=numeric())
 pht <- Dipermht.test(diff(range(cumsum(dsign))), runs, 2000, FALSE, 2)
 verify.permht('BTP PH14', pht, exp)
 
-# Permutations = (1, 2), upper tail is halfway through 1 plus 2.
-exp <- list(statistic=1, p.value=0.75, critval=matrix(c(2,2,2,2), nrow=1))
+# Permutations = (1, 2), height dist 2,2 so 1 under
+exp <- list(statistic=1, p.value=1.0, critval=matrix(c(2,2,2,2), nrow=1))
 pht <- Dipermht.test(1, c(1,2, -1), 5000, FALSE, 2)
 verify.permht('BTP PH15', pht, exp)
 
-# Permutations (10x1, 2,2), upper tail is 7 of 12.
+# Permutations (10x1, 2,2), height dist 10x 1, 2x2.  Upper tail 7/12.
 exp <- list(statistic=1, p.value=0.5833, critval=matrix(c(2,2,2,2), nrow=1))
 pht <- Dipermht.test(1, c(1,1,0,-1), 5000, FALSE, 2)
 verify.permht('BTP PH16a', pht, exp)
 
-# Same permutations as 16a but lower tail.
+# Same permutations as 16a but lower tail, 5/12.  Critical heights at start.
 exp <- list(statistic=1, p.value=0.4167, critval=matrix(c(1,1,1,1), nrow=1))
-pht <- Dipermht.test(1, c(1,0,-1,-1), 5000, TRUE, 2)
+pht <- Dipermht.test(1, c(1,0,1,-1), 5000, TRUE, 2)
 verify.permht('BTP PH16b', pht, exp)
 
-# Permutations (40x1, 8x2), upper tail is 4 of 48.
-exp <- list(statistic=2, p.value=0.0833, critval=matrix(c(2,2,2,2), nrow=1))
+# Permutations (40x1, 8x2), height dist 20x 0, 28x 1, so 1 above.
+exp <- list(statistic=2, p.value=0.0000, critval=matrix(c(1,1,1,1), nrow=1))
 pht <- Dipermht.test(2, c(-1,-1,0,1,1), 5000, FALSE, 2)
 verify.permht('BTP PH16c', pht, exp)
 
-exp <- list(statistic=1, p.value=0.5, critval=matrix(c(1,1,1,1), nrow=1))
+# Height dist 6x 0, 6x 1.  Lower tail is 9/12 and critical hts at start.
+exp <- list(statistic=1, p.value=0.75, critval=matrix(c(0,0,0,0), nrow=1))
 pht <- Dipermht.test(1, c(1,0,-1, 0), 5000, TRUE, 2)
 verify.permht('BTP PH17', pht, exp)
 
-exp <- list(statistic=0, p.value=1.0, critval=matrix(c(1,1,1,1), nrow=1))
+# Same distribution.  0 upper tail is also 9/12, but critical hts at end.
+exp <- list(statistic=0, p.value=0.75, critval=matrix(c(1,1,1,1), nrow=1))
 pht <- Dipermht.test(0, c(1,0,-1, 0), 5000, FALSE, 2)
 verify.permht('BTP PH18', pht, exp)
 
+# Same distribution, so 2 above.
 exp <- list(statistic=2, p.value=0.0, critval=matrix(c(1,1,1,1), nrow=1))
 pht <- Dipermht.test(2, c(1,0,-1, 0), 5000, FALSE, 2)
 verify.permht('BTP PH19', pht, exp)

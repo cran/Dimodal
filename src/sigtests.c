@@ -704,7 +704,6 @@ SEXP impl_excursion(SEXP Rdata, int nexcur, int ndraw, int ispeak, int dosort) {
 	double *rd;                           /* data if double */
 	int *ri;                              /* data if integer */
 	double xcum;                          /* cumulative draw */
-	double xinit;                         /* first cumulative value */
 	double xmin, xmax;                    /* largest/smallest of xcum */
 	int ndata;                            /* amount of data */
 	int xID;                              /* sample index */
@@ -754,7 +753,6 @@ SEXP impl_excursion(SEXP Rdata, int nexcur, int ndraw, int ispeak, int dosort) {
 
 	for (i=0; i<nexcur; i++) {
 		xcum = 0.0;
-		xinit = 0.0;
 		xmax = 0.0;
 		xmin = 0.0;
 		for (j=0; j<ndraw; j++) {
@@ -790,7 +788,6 @@ SEXP impl_excursion(SEXP Rdata, int nexcur, int ndraw, int ispeak, int dosort) {
 			if (0 == j) {
 				xmax = xcum;
 				xmin = xcum;
-				xinit = xcum;
 			} else {
 				if (xmax < xcum) {
 					xmax = xcum;
@@ -801,10 +798,10 @@ SEXP impl_excursion(SEXP Rdata, int nexcur, int ndraw, int ispeak, int dosort) {
 			}
 		}
 		if (ispeak) {
-			if (xcum < xinit) {
+			if (xcum < 0.0) {
 				ht[i] = xmax - xcum;
 			} else {
-				ht[i] = xmax - xinit;
+				ht[i] = xmax;
 			}
 		} else {
 			ht[i] = xmax - xmin;

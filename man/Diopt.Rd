@@ -167,10 +167,10 @@ As described in Details.
 \item{\code{excur.seed} <positive integer incl. 0>}{ \optcr
   RNG seed for each excursion test, 0 to not set
 }
-\item{\code{excur.nrep} <positive integer>}{ \optcr
+\item{\code{perm.nrep} <positive integer>}{ \optcr
   number of trial draws for run permutation test
 }
-\item{\code{excur.seed} <positive integer incl. 0>}{ \optcr
+\item{\code{perm.seed} <positive integer incl. 0>}{ \optcr
   RNG seed for each permutation test, 0 to not set
 }
 }

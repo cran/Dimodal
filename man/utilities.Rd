@@ -22,7 +22,7 @@ runs.as.rle(runs, x)
 select.peaks(pk)
 center.diw(m)
 match.features(m, near=10, foverlap=0.70, nomatch=NA_integer_, quiet=FALSE)
-shiftID.place(feat, offset, xmid, midoff)
+shiftID.place(feat, offset, xmid)
 }
 
 \arguments{
@@ -74,9 +74,6 @@ shiftID.place(feat, offset, xmid, midoff)
 \item{xmid}{
   a vector of interpolated quantiles to convert indices back to raw data,
   as stored in the \opt{Didata} 
-}
-\item{midoff}{
-  an integer, the amount to shift positions in addition to offset
 }
 }
 
@@ -150,15 +147,14 @@ The \code{shiftID.place} function is used in Dimodal to modify the
 placement of features, and is provided separately if the detectors
 \code{find.peaks} or \code{find.flats} are called
 directly.  It adds \code{offset} to the columns \opt{pos}, \opt{stID},
-\opt{endID}, \opt{lminID}, \opt{rminID}, \opt{lsuppID}, and \opt{rsuppID}
-if they exist in the features data frame to account for values skipped
-during filtering.  Use the \opt{lp.stID} attribute for low-pass features
-and \opt{diw.stID} for interval spacing.  If pos, stID,
-or endID are in the data frame the function also adds columns \opt{x},
-\opt{xst}, and \opt{xend} respectively with the original data value for
-the index by using the midquantile result \code{xmid}.  Here the index is
-further modified by \code{midoff}; use 0 for low-pass features 
-or half the interval width, stored as attribute \opt{wdiw}.
+\opt{endID}, \opt{lminID}, \opt{rminID}, \opt{lsuppID}, \opt{rsuppID},
+and \opt{src} if they exist in the features data frame to account for
+values skipped during filtering.  Use the \opt{lp.stID} attribute for
+low-pass features, \opt{diw.stID} for interval spacing, and 2 for
+changepoints.  If pos, stID, or endID are in the data frame the function
+also adds columns \opt{x}, \opt{xst}, and \opt{xend} respectively with
+the original data value for the index by using the midquantile result
+\code{xmid}.
 }
 
 \value{
